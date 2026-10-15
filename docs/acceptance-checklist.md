@@ -52,8 +52,12 @@
 - [x] TypeScript 및 Vite 프로덕션 빌드
 - [x] 하위 경로 정적 자원·HashRouter·새로고침을 프로덕션 프리뷰에서 확인
 - [x] GitHub 저장소 `ARU-Tris/national-excuse-office` 생성
-- [ ] GitHub Pages 배포
-- [ ] 공개 Pages의 실제 접수·PDF 발급 확인
+- [x] GitHub Pages 배포
+- [x] 공개 Pages의 실제 접수·PDF 발급 확인
+
+공개 주소: https://aru-tris.github.io/national-excuse-office/
+
+[첫 배포 GitHub Actions](https://github.com/ARU-Tris/national-excuse-office/actions/runs/38731584364)의 build/deploy가 모두 성공했다. HTTP 200, 프로젝트 하위 경로와 제목, 공개 화면을 확인했다. 공개 사이트에서 신청 → 접수 → 불승인 → 실제 PDF 다운로드 → 새로고침 → 이의신청 → ZIP → JSON 내보내기 및 별도 브라우저 컨텍스트 복원까지 1개 통합 E2E가 13.4초에 통과했다. 공개 사이트 확인은 격리된 테스트 컨텍스트를 사용했다.
 
 ## 사람이 확인할 항목
 

@@ -4,7 +4,7 @@
 
 사소한 생활상의 일을 미루고 싶은 사유를 접수하고, 가상의 엄정한 심사·결재 절차를 거쳐 한국형 공문서 PDF를 발급하는 무료 풍자 웹서비스입니다.
 
-- 서비스: https://ARU-Tris.github.io/national-excuse-office/
+- 서비스: https://aru-tris.github.io/national-excuse-office/
 - 원본 제품 명세: [국립핑계관리청.md](./국립핑계관리청.md)
 - 브랜드·서식 자료: 서비스의 `#/design`
 
