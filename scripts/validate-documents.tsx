@@ -75,7 +75,7 @@ const long = reviewCase(
     {
       ...sampleCase,
       reasonDetail:
-        "한글 장문, 漢字, 韓國, English 123, (가), % / & 등의 조판을 확인합니다. 유예 후에는 첫 번째 업무에 착수하겠습니다.\n"
+        "시작할 의욕이 없다. 한글 장문, 漢字, 韓國, English 123, (가), % / & 등의 조판을 확인합니다. 유예 후에는 첫 번째 업무에 착수하겠습니다.\n"
           .repeat(20)
           .slice(0, 1000),
       evidenceDetail:
@@ -94,6 +94,34 @@ await renderToFile(
     document={long.documents.find((d) => d.code === "F-06")!}
   />,
   `output/pdf/validation/F-06-long.pdf`,
+);
+const semantic = reviewCase(
+  createCase(
+    {
+      ...sampleCase,
+      taskDescription: "오늘 마감인 보고서 본문 작성하기",
+      reasonDetail:
+        "자료는 다 찾았고 본문만 남았다. 게임 좀 하다가 내일 쓰고 싶다.",
+      evidenceDetail: "",
+    },
+    false,
+    now,
+  ),
+  now,
+);
+await renderToFile(
+  <OfficialDocument
+    record={semantic}
+    document={semantic.documents.find((d) => d.code === "F-06")!}
+  />,
+  "output/pdf/validation/F-06-semantic.pdf",
+);
+await renderToFile(
+  <OfficialDocument
+    record={appealed}
+    document={appealed.documents.find((d) => d.code === "F-07")!}
+  />,
+  "output/pdf/validation/F-07-appeal-limited.pdf",
 );
 console.log(
   "Generated all nine occurred forms and long Korean/mixed-script pagination evidence.",

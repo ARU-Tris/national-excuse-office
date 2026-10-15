@@ -2,71 +2,85 @@
   {
     "file": "F-01.pdf",
     "pages": 1,
-    "characters": 471,
+    "characters": 465,
     "embedded_fonts": 36,
     "bounds": "pass"
   },
   {
     "file": "F-02.pdf",
     "pages": 1,
-    "characters": 603,
+    "characters": 596,
     "embedded_fonts": 32,
     "bounds": "pass"
   },
   {
     "file": "F-03.pdf",
     "pages": 1,
-    "characters": 679,
+    "characters": 801,
     "embedded_fonts": 28,
     "bounds": "pass"
   },
   {
     "file": "F-04.pdf",
     "pages": 1,
-    "characters": 806,
-    "embedded_fonts": 40,
+    "characters": 884,
+    "embedded_fonts": 39,
     "bounds": "pass"
   },
   {
     "file": "F-05.pdf",
     "pages": 1,
-    "characters": 698,
-    "embedded_fonts": 40,
+    "characters": 671,
+    "embedded_fonts": 39,
     "bounds": "pass"
   },
   {
     "file": "F-06-long.pdf",
     "pages": 3,
-    "characters": 3536,
+    "characters": 3654,
     "embedded_fonts": 69,
+    "bounds": "pass"
+  },
+  {
+    "file": "F-06-semantic.pdf",
+    "pages": 1,
+    "characters": 875,
+    "embedded_fonts": 27,
     "bounds": "pass"
   },
   {
     "file": "F-06.pdf",
     "pages": 1,
-    "characters": 706,
+    "characters": 799,
     "embedded_fonts": 27,
+    "bounds": "pass"
+  },
+  {
+    "file": "F-07-appeal-limited.pdf",
+    "pages": 1,
+    "characters": 826,
+    "embedded_fonts": 31,
     "bounds": "pass"
   },
   {
     "file": "F-07.pdf",
     "pages": 1,
-    "characters": 644,
+    "characters": 760,
     "embedded_fonts": 30,
     "bounds": "pass"
   },
   {
     "file": "F-08.pdf",
     "pages": 1,
-    "characters": 627,
+    "characters": 621,
     "embedded_fonts": 40,
     "bounds": "pass"
   },
   {
     "file": "F-09.pdf",
-    "pages": 1,
-    "characters": 815,
-    "embedded_fonts": 30,
+    "pages": 2,
+    "characters": 1142,
+    "embedded_fonts": 51,
     "bounds": "pass"
   }
 ]

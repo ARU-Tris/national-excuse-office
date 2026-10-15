@@ -24,6 +24,66 @@ export type Application = {
   deadlineCategory: "today" | "later" | "none" | "unknown";
   reviewMode: "strict" | "lenient";
 };
+export type StatementSource =
+  | "task"
+  | "reason"
+  | "evidence"
+  | "supplement"
+  | "appeal";
+export type FactCode =
+  | "fatigue"
+  | "sleep_loss"
+  | "health"
+  | "overload"
+  | "rest"
+  | "motivation"
+  | "leisure"
+  | "schedule"
+  | "dependency"
+  | "technical"
+  | "anxiety"
+  | "preparation_complete"
+  | "in_progress"
+  | "nearly_complete"
+  | "not_started"
+  | "remaining_work"
+  | "completed"
+  | "recovered"
+  | "block_resolved";
+export type ReviewFact = {
+  code: FactCode;
+  source: StatementSource;
+  excerpt: string;
+};
+export type ReviewPlan = {
+  source: StatementSource;
+  excerpt: string;
+  action: string;
+  timing: string;
+  resumeWithinMinutes?: number;
+  sameDay: boolean;
+  laterDay: boolean;
+  contingent: boolean;
+};
+export type ReviewAnalysis = {
+  version: "sentence-rules/2.0";
+  facts: ReviewFact[];
+  plan?: ReviewPlan;
+  deadline: {
+    value: Application["deadlineCategory"];
+    source: "selection" | StatementSource;
+    excerpt?: string;
+  };
+  issues: {
+    code:
+      | "deadline_unknown"
+      | "deadline_conflict"
+      | "reason_unclear"
+      | "plan_duration"
+      | "already_completed";
+    question: string;
+  }[];
+};
 export type Decision = {
   outcome: Outcome;
   decidedAtISO: string;
@@ -33,6 +93,8 @@ export type Decision = {
   conditions: string[];
   firstAction: string;
   checks: { label: string; finding: string }[];
+  analysis?: ReviewAnalysis;
+  approvedScope?: string;
 };
 export type DocumentRecord = {
   code: FormCode;

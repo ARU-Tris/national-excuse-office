@@ -953,8 +953,11 @@
 }
 .resultGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 55px;
+}
+.resultGrid > * {
+  min-width: 0;
 }
 .resultGrid h2 {
   font-size: 20px;
@@ -2949,7 +2952,7 @@
     padding: 5px 8px;
   }
   .resultGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 35px;
   }
   .reasonLine {
@@ -2958,4 +2961,17 @@
   .resultPdf {
     height: 520px;
   }
+}
+.reviewEvidence {
+  margin: 24px 0;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+.reviewEvidence summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+.reviewEvidence[open] summary {
+  margin-bottom: 16px;
 }

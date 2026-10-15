@@ -209,7 +209,7 @@ test("long Korean content paginates and literal markup cannot execute", async ({
   await submit(page, {
     task: "<img src=x onerror=alert(1)> 과제 작성하기",
     reason:
-      "한글 장문과 漢字, English 123 및 특수문자 (가) / % 의 조판을 검토합니다.\n"
+      "시작할 의욕이 없다. 한글 장문과 漢字, English 123 및 특수문자 (가) / % 의 조판을 검토합니다.\n"
         .repeat(15)
         .slice(0, 1000),
     evidence: "사유를 충분히 소명하며 추가 자료와 수행계획을 안내합니다.\n"
@@ -235,12 +235,13 @@ test("long Korean content paginates and literal markup cannot execute", async ({
 });
 test("mobile layout, keyboard form, draft and local-only requests", async ({
   page,
+  baseURL,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   const external: string[] = [];
   page.on("request", (r) => {
     if (
-      !r.url().startsWith("http://127.0.0.1") &&
+      !r.url().startsWith(new URL(baseURL!).origin + "/") &&
       !r.url().startsWith("blob:") &&
       !r.url().startsWith("data:")
     )
@@ -281,6 +282,96 @@ test("mobile layout, keyboard form, draft and local-only requests", async ({
   });
   expect(external).toEqual([]);
 });
+
+test("sentence-specific review, evidence and mobile result stay entirely local", async ({
+  page,
+  baseURL,
+}) => {
+  const requests: string[] = [];
+  page.on("request", (request) => {
+    if (
+      /^https?:/u.test(request.url()) &&
+      new URL(request.url()).origin !== new URL(baseURL!).origin
+    )
+      requests.push(request.url());
+  });
+  await submit(page, {
+    task: "오늘 마감인 보고서 본문 작성하기",
+    reason: "자료는 다 찾았고 본문만 남았다. 게임 좀 하다가 내일 쓰고 싶다.",
+  });
+  await expect(
+    page.locator("main").getByText("불승인", { exact: true }),
+  ).toBeVisible();
+  await expect(page.locator("main")).toContainText("여가 활동 우선 희망");
+  await expect(page.locator("main")).toContainText("남은 대상업무");
+  await expect(page.locator("main")).toContainText("남았다고 기재한 본문");
+  await page.getByText("신청내용에서 검토한 사항", { exact: true }).click();
+  await expect(
+    page.getByRole("definition").filter({ hasText: /남은 작업 식별/ }),
+  ).toBeVisible();
+  await waitPdf(page);
+  await page.screenshot({
+    path: path.join(output, "semantic-result-desktop.png"),
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: path.join(output, "semantic-result-mobile.png"),
+    fullPage: true,
+  });
+  expect(requests).toEqual([]);
+});
+
+test("denied fatigue is not repeated as a reason for approval", async ({
+  page,
+}) => {
+  await submit(page, {
+    minutes: "10",
+    deadline: "none",
+    reason: "피곤하지 않다. 게임을 더 하고 싶다.",
+  });
+  await expect(
+    page.locator("main").getByText("조건부 승인", { exact: true }),
+  ).toBeVisible();
+  await expect(page.locator("main")).toContainText("여가 활동 우선 희망");
+  await expect(page.locator("main")).not.toContainText("피로·기력 저하 정황");
+});
+
+test("conflicting deadline gets a specific supplement and a corrected final decision", async ({
+  page,
+}) => {
+  await submit(page, {
+    minutes: "10",
+    deadline: "none",
+    reason: "오늘 마감이다. 피곤하다. 10분 뒤 본문을 작성하겠습니다.",
+  });
+  await expect(
+    page.locator("main").getByText("보완요구", { exact: true }),
+  ).toBeVisible();
+  await expect(page.locator("main")).toContainText("일치하지 않음");
+  await page.getByRole("link", { name: /보완자료 제출/ }).click();
+  await page
+    .getByLabel("추가 소명 필수")
+    .fill(
+      "확인 결과 마감은 내일입니다. 10분 뒤 본문의 첫 문장을 작성하겠습니다.",
+    );
+  await page.getByRole("checkbox").check();
+  await page
+    .getByRole("button", { name: "보완자료 접수", exact: true })
+    .click();
+  await expect(
+    page.locator("main").getByText("조건부 승인", { exact: true }),
+  ).toBeVisible();
+  await expect(page.locator("main")).toContainText("보완 소명");
+  await waitPdf(page);
+  await page.reload();
+  await expect(page.locator("main")).toContainText("내일 이후");
+});
 test("deletion requires confirmation and malformed imports keep records", async ({
   page,
 }) => {
@@ -290,13 +381,11 @@ test("deletion requires confirmation and malformed imports keep records", async 
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.getByRole("button", { name: "취소", exact: true }).click();
   await expect(page.locator("tbody tr")).toHaveCount(1);
-  await page
-    .getByLabel("JSON 백업 파일")
-    .setInputFiles({
-      name: "invalid.json",
-      mimeType: "application/json",
-      buffer: Buffer.from('{"schemaVersion":900}'),
-    });
+  await page.getByLabel("JSON 백업 파일").setInputFiles({
+    name: "invalid.json",
+    mimeType: "application/json",
+    buffer: Buffer.from('{"schemaVersion":900}'),
+  });
   await expect(page.getByRole("alert")).toContainText(
     "지원하지 않는 백업 형식",
   );

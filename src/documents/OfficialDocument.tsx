@@ -512,19 +512,21 @@ function AppealNoticeBody({
           </Para>
         ))}
       </Section>
-      <Section title="4. 향후 안내">
-        <Para sub>가. {decision.firstAction}</Para>
-        {decision.conditions.map((r, i) => (
-          <Para sub key={i}>
-            {alphabet[i + 1] ?? "다"}. {r}
+      <View wrap={false}>
+        <Section title="4. 향후 안내">
+          <Para sub>가. {decision.firstAction}</Para>
+          {decision.conditions.map((r, i) => (
+            <Para sub key={i}>
+              {alphabet[i + 1] ?? "다"}. {r}
+            </Para>
+          ))}
+          <Para sub>
+            본 사건의 1회 이의신청 절차는 종결되었습니다. 실제 외부의 의무와
+            기한은 변경되지 않습니다. 끝.
           </Para>
-        ))}
-        <Para sub>
-          본 사건의 1회 이의신청 절차는 종결되었습니다. 실제 외부의 의무와
-          기한은 변경되지 않습니다. 끝.
-        </Para>
-      </Section>
-      <Sender />
+        </Section>
+        <Sender />
+      </View>
     </>
   );
 }
@@ -552,9 +554,15 @@ function ApprovalNoticeBody({
           ["승인결과", labels.outcome[decision.outcome]],
           [
             "인정범위",
-            `신청한 개인적 업무의 착수 준비시간 ${labels.minutes[record.requestedMinutes]}`,
+            decision.approvedScope ??
+              `신청한 개인적 업무의 착수 준비시간 ${labels.minutes[record.requestedMinutes]}`,
           ],
-          ["실제 마감", labels.deadline[record.deadlineCategory]],
+          [
+            decision.analysis ? "검토한 마감" : "실제 마감",
+            labels.deadline[
+              decision.analysis?.deadline.value ?? record.deadlineCategory
+            ],
+          ],
         ]}
       />
       <Section title="2. 처분 사유">
@@ -578,13 +586,15 @@ function ApprovalNoticeBody({
           </Para>
         )}
       </Section>
-      <Section title="4. 향후 이행 권고">
-        <Para sub>{decision.firstAction}</Para>
-        <Para sub>
-          본 결정은 실제 외부기관의 의무나 마감기한을 변경하지 않습니다. 끝.
-        </Para>
-      </Section>
-      <Sender />
+      <View wrap={false}>
+        <Section title="4. 향후 이행 권고">
+          <Para sub>{decision.firstAction}</Para>
+          <Para sub>
+            본 결정은 실제 외부기관의 의무나 마감기한을 변경하지 않습니다. 끝.
+          </Para>
+        </Section>
+        <Sender />
+      </View>
     </>
   );
 }
@@ -643,7 +653,8 @@ function NoticeBody({
               ["승인번호", document.number],
               [
                 "인정범위",
-                `신청한 개인적 업무의 착수 준비시간 ${labels.minutes[record.requestedMinutes]}`,
+                decision.approvedScope ??
+                  `신청한 개인적 업무의 착수 준비시간 ${labels.minutes[record.requestedMinutes]}`,
               ],
               ["이행시점", "본인이 유예시간 경과를 확인한 직후"],
               [
@@ -724,7 +735,28 @@ function InternalBody({
         </Para>
       </Section>
       <Section title="2. 주요 검토사항">
-        <Table rows={decision.checks.map((c) => [c.label, c.finding])} />
+        <Table
+          rows={decision.checks
+            .filter(
+              (c) =>
+                !decision.analysis ||
+                (c.label !== "종합 의견" &&
+                  (c.label !== "업무 진행 상태" ||
+                    decision.analysis.facts.some((f) =>
+                      [
+                        "preparation_complete",
+                        "in_progress",
+                        "nearly_complete",
+                        "remaining_work",
+                        "not_started",
+                        "completed",
+                      ].includes(f.code),
+                    )) &&
+                  (c.label !== "복귀 가능성" ||
+                    Boolean(decision.analysis.plan))),
+            )
+            .map((c) => [c.label, c.finding])}
+        />
       </Section>
       <Section title="3. 처분안 및 심사의견">
         {(draft ? decision.rationale.slice(-1) : decision.rationale).map(

@@ -29,6 +29,13 @@ for filename in sorted(Path('output/pdf/validation').glob('*.pdf')):
                 if desc and ('/FontFile2' in desc.get_object() or '/FontFile3' in desc.get_object()):
                     font_count += 1
     assert font_count, (filename, 'no embedded fonts')
+    if filename.stem == 'F-06-semantic':
+        for word in ['남은 대상업무', '여가 활동', '오늘의 마감기한', '본문의 첫 문장']:
+            assert word.replace(' ', '') in text.replace(' ', '').replace('\n', ''), (filename, word)
+    if filename.stem == 'F-07-appeal-limited':
+        assert '10분 이내' in text, filename
+        assert '착수 준비시간 하루' not in text, filename
+        assert '하루전체의유예는인정되지않음' in ''.join(text.split()), filename
     if filename.stem == 'F-06-long':
         assert len(reader.pages) >= 2, filename
         for word in ['漢字', '韓國', 'English', '123']:

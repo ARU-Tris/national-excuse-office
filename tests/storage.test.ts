@@ -1,6 +1,6 @@
 import "fake-indexeddb/auto";
 import { beforeAll, beforeEach, describe, it, expect } from "vitest";
-import { createCase, reviewCase } from "../src/domain/cases";
+import { createCase, reviewCase, appealCase } from "../src/domain/cases";
 import { sampleCase } from "../src/documents/fixtures";
 import * as storage from "../src/storage/database";
 const record = () =>
@@ -20,6 +20,39 @@ describe("local records and portable backups", () => {
     const original = record();
     expect(storage.parseBackup(storage.exportBackup([original]))).toEqual([
       original,
+    ]);
+  });
+  it("restores legacy decisions and documents without recalculating them", async () => {
+    const legacy = record();
+    legacy.decision!.engineVersion = "review-engine/1.0";
+    delete legacy.decision!.analysis;
+    delete legacy.decision!.approvedScope;
+    for (const document of legacy.documents) {
+      if (!document.decision) continue;
+      document.decision.engineVersion = "review-engine/1.0";
+      delete document.decision.analysis;
+      delete document.decision.approvedScope;
+    }
+    const exported = storage.exportBackup([legacy]);
+    await storage.importBackup(exported);
+    const [restored] = await storage.listCases();
+    expect(restored).toEqual(legacy);
+    expect(reviewCase(restored, "2027-01-01T00:00:00.000Z")).toBe(restored);
+    const originalDocument = structuredClone(
+      restored.documents.find((d) => d.code === "F-06"),
+    );
+    const appealed = appealCase(
+      restored,
+      "새 계획을 반영해 주세요.",
+      "10분 뒤 본문을 작성하겠습니다.",
+      "2026-10-15T02:00:00.000Z",
+    );
+    expect(appealed.appeal?.decision.engineVersion).toBe("review-engine/2.0");
+    expect(appealed.documents.find((d) => d.code === "F-06")).toEqual(
+      originalDocument,
+    );
+    expect(storage.parseBackup(storage.exportBackup([appealed]))).toEqual([
+      appealed,
     ]);
   });
   it("imports without overwriting existing records", async () => {

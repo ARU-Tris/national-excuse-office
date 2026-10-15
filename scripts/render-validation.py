@@ -4,6 +4,8 @@ from PIL import Image, ImageOps, ImageDraw
 
 destination=Path('tmp/pdfs/final')
 destination.mkdir(parents=True,exist_ok=True)
+for previous in destination.glob('*.png'):
+    previous.unlink()
 for source in sorted(Path('output/pdf/validation').glob('*.pdf')):
     subprocess.run(['pdftoppm','-scale-to','1100','-png',str(source),str(destination/source.stem)],check=True)
 files=sorted(destination.glob('*.png'))

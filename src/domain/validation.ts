@@ -56,7 +56,7 @@ const outcome = z.enum([
 export const decisionSchema = z.object({
   outcome,
   decidedAtISO: iso,
-  engineVersion: z.literal("review-engine/1.0"),
+  engineVersion: z.enum(["review-engine/1.0", "review-engine/2.0"]),
   factualFindings: z.array(z.string().max(3000)).min(1).max(20),
   rationale: z.array(z.string().max(5000)).min(1).max(20),
   conditions: z.array(z.string().max(2000)).max(20),
@@ -67,6 +67,91 @@ export const decisionSchema = z.object({
     )
     .min(1)
     .max(20),
+  analysis: z
+    .object({
+      version: z.literal("sentence-rules/2.0"),
+      facts: z
+        .array(
+          z.object({
+            code: z.enum([
+              "fatigue",
+              "sleep_loss",
+              "health",
+              "overload",
+              "rest",
+              "motivation",
+              "leisure",
+              "schedule",
+              "dependency",
+              "technical",
+              "anxiety",
+              "preparation_complete",
+              "in_progress",
+              "nearly_complete",
+              "not_started",
+              "remaining_work",
+              "completed",
+              "recovered",
+              "block_resolved",
+            ]),
+            source: z.enum([
+              "task",
+              "reason",
+              "evidence",
+              "supplement",
+              "appeal",
+            ]),
+            excerpt: z.string().min(1).max(160),
+          }),
+        )
+        .max(24),
+      plan: z
+        .object({
+          source: z.enum([
+            "task",
+            "reason",
+            "evidence",
+            "supplement",
+            "appeal",
+          ]),
+          excerpt: z.string().min(1).max(160),
+          action: z.string().min(1).max(300),
+          timing: z.string().min(1).max(100),
+          resumeWithinMinutes: z.number().min(0).max(10080).optional(),
+          sameDay: z.boolean(),
+          laterDay: z.boolean(),
+          contingent: z.boolean(),
+        })
+        .optional(),
+      deadline: z.object({
+        value: z.enum(["today", "later", "none", "unknown"]),
+        source: z.enum([
+          "selection",
+          "task",
+          "reason",
+          "evidence",
+          "supplement",
+          "appeal",
+        ]),
+        excerpt: z.string().max(160).optional(),
+      }),
+      issues: z
+        .array(
+          z.object({
+            code: z.enum([
+              "deadline_unknown",
+              "deadline_conflict",
+              "reason_unclear",
+              "plan_duration",
+              "already_completed",
+            ]),
+            question: z.string().min(1).max(1000),
+          }),
+        )
+        .max(5),
+    })
+    .optional(),
+  approvedScope: z.string().min(1).max(500).optional(),
 });
 const documentSchema = z.object({
   code: z.enum([

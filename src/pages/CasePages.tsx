@@ -309,6 +309,21 @@ export function ResultPage() {
               {reason}
             </p>
           ))}
+          {decision.analysis && (
+            <details className={s.reviewEvidence}>
+              <summary>신청내용에서 검토한 사항</summary>
+              <p className={s.caption}>
+                입력한 진술을 기준으로 검토했습니다. 아래 항목은 외부 사실을
+                확인한 결과가 아닙니다.
+              </p>
+              <DefinitionTable
+                rows={decision.checks.map((check) => [
+                  check.label,
+                  check.finding,
+                ])}
+              />
+            </details>
+          )}
           {outcome !== "supplement_requested" && (
             <div className={s.firstAction}>
               <Check size={21} />
@@ -334,6 +349,9 @@ export function ResultPage() {
               ["신청인", record.applicantAlias],
               ["희망 유예", labels.minutes[record.requestedMinutes]],
               ["심사 방식", labels.mode[record.reviewMode]],
+              ...(decision.approvedScope
+                ? [["인정 범위", decision.approvedScope] as [string, string]]
+                : []),
               [
                 "담당부서",
                 record.appeal ? "재심사조정실" : "생활사유심사국 제1사유심사과",

@@ -21,7 +21,7 @@ const input: Application = {
   deadlineCategory: "today",
   reviewMode: "strict",
 };
-describe("review-engine/1.0 representative decisions", () => {
+describe("representative decisions and case preservation", () => {
   it("rejects the brief’s exact same-day, one-day, low-motivation example", () => {
     expect(reviewApplication(input, now).outcome).toBe("rejected");
   });

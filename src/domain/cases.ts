@@ -127,7 +127,13 @@ export function appealCase(
     throw new Error("이의 취지는 5~300자로 작성해 주세요.");
   const detail = responseSchema.parse(reason);
   const originalDecision = structuredClone(current.decision);
-  const decision = reviewAppeal(current, originalDecision, detail, now);
+  const decision = reviewAppeal(
+    current,
+    originalDecision,
+    detail,
+    now,
+    current.supplement?.response,
+  );
   const record: CaseRecord = {
     ...current,
     status: "appeal_closed",
