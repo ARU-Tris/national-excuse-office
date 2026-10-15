@@ -51,7 +51,8 @@
 
 - [x] TypeScript 및 Vite 프로덕션 빌드
 - [x] 하위 경로 정적 자원·HashRouter·새로고침을 프로덕션 프리뷰에서 확인
-- [ ] GitHub 저장소 생성 및 Pages 배포
+- [x] GitHub 저장소 `ARU-Tris/national-excuse-office` 생성
+- [ ] GitHub Pages 배포
 - [ ] 공개 Pages의 실제 접수·PDF 발급 확인
 
 ## 사람이 확인할 항목
