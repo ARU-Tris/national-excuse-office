@@ -1,0 +1,89 @@
+:root {
+  font-family: "Noto Sans KR", sans-serif;
+  color: #18232d;
+  background: #fff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --navy: #193a59;
+  --blue: #2a6191;
+  --pale: #eaf1f6;
+  --ink: #18232d;
+  --muted: #566572;
+  --line: #d3dbe2;
+  --surface: #f4f6f8;
+  --seal: #ae333a;
+  --success: #286b51;
+  --warning: #94621a;
+  --rejected: #9b3b3d;
+  --content: 1200px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button,
+input,
+select,
+textarea,
+a {
+  outline-offset: 4px;
+}
+:focus-visible {
+  outline: 3px solid #2a6191;
+}
+input,
+textarea,
+select {
+  min-width: 0;
+}
+textarea {
+  resize: vertical;
+}
+img,
+canvas {
+  max-width: 100%;
+}
+::selection {
+  background: #cde0ef;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
